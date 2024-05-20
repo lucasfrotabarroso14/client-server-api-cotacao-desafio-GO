@@ -1,12 +1,17 @@
+// #cgo CFLAGS: -g
+
 package main
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
-
+	_ "github.com/mattn/go-sqlite3"
 	"io/ioutil"
-
+	"log"
 	"net/http"
+	"time"
 )
 
 type ExchangeRate struct {
@@ -27,7 +32,24 @@ type CurrencyInfo struct {
 	CreateDate string `json:"create_date"`
 }
 
+var db *sql.DB
+
 func main() {
+	var err error
+	db, err = sql.Open("sqlite3", "database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS dollar_quotes (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		bid TEXT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`)
+	if err != nil {
+		log.Fatal(err)
+	}
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
@@ -39,11 +61,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	err = saveToDatabase(dollarPrice["current_dollar"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 	jsounOutput, err := json.Marshal(dollarPrice)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsounOutput)
 	fmt.Println("Request finalizada")
@@ -51,11 +81,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas retornar o bid
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	defer cancel()
 
-	resp, error := http.Get("https://economia.awesomeapi.com.br/json/last/USD-BRL")
-	if error != nil {
-		return nil, error
+	req, err := http.NewRequestWithContext(ctx, "GET", "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
+	if err != nil {
+		return nil, err
 	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
@@ -73,5 +112,17 @@ func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas r
 		"current_dollar": exchangeRate.USDBRL.Bid,
 	}
 	return currentDollar, nil
+
+}
+func saveToDatabase(bid string) error {
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	defer cancel()
+	_, err := db.ExecContext(ctx, "INSERT INTO dollar_quotes (bid) values (?)", bid)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Dados inseridos com sucesso no banco")
+	return nil
 
 }
