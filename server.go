@@ -70,7 +70,7 @@ func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas r
 		return nil, err
 	}
 	currentDollar := map[string]string{
-		"current_doLlar": exchangeRate.USDBRL.Bid,
+		"current_dollar": exchangeRate.USDBRL.Bid,
 	}
 	return currentDollar, nil
 
