@@ -1,4 +1,4 @@
-# Desafio: Aplicação de Webserver HTTP, Contextos, Banco de Dados e Manipulação de Arquivos com Go
+# Aplicação de Webserver HTTP, Contextos, Banco de Dados e Manipulação de Arquivos com Go
 
 Aplicações: webserver HTTP, context, banco de dados e manipulação de arquivos com Go.
 
