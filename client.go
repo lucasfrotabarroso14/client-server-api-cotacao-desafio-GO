@@ -15,7 +15,7 @@ import (
 func main() {
 
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "http://127.0.0.1:8080/", nil)
@@ -24,15 +24,16 @@ func main() {
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		panic(err)
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Fatalf("Erro ao fazer a requisicao GET para o server: %v", err)
+		}
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// abaixo eu estou declarando um map com a chave string e o valor de qualquer tipp
-	// em GO uma interface vazia  indica que os valores podem ser de qualquer tipo
+
 	var result map[string]interface{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {

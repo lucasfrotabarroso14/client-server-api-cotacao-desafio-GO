@@ -82,9 +82,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas retornar o bid
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 200*time.Millisecond)
 	defer cancel()
-
+	// Buscar o preco da api externa:
 	req, err := http.NewRequestWithContext(ctx, "GET", "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
 	if err != nil {
 		return nil, err
@@ -92,7 +92,10 @@ func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas r
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		panic(err)
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Printf("Erro: Timeout ao obter o preço do dolar da api externa")
+		}
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -116,11 +119,12 @@ func GetDollarPrice() (map[string]string, error) { //nessa funcao quero apenas r
 }
 func saveToDatabase(bid string) error {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Millisecond)
 	defer cancel()
 	_, err := db.ExecContext(ctx, "INSERT INTO dollar_quotes (bid) values (?)", bid)
 	if err != nil {
-		return err
+		log.Printf("Erro ao ao salvar no banco de dados : %v", err)
+
 	}
 	fmt.Println("Dados inseridos com sucesso no banco")
 	return nil
