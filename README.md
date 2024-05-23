@@ -12,7 +12,7 @@ Serviços:
 ### Requisitos
 
 1. **client.go**
-   - Deverá realizar uma requisição HTTP para `server.go` solicitando a cotação do dólar.
+   - Realizar uma requisição HTTP para `server.go` solicitando a cotação do dólar.
    - Receber do `server.go` apenas o valor atual do câmbio (campo "bid" do JSON).
    - Usar o package `context` com timeout máximo de 300ms para receber o resultado de `server.go`.
    - Salvar a cotação atual em um arquivo `cotacao.txt` no formato: `Dólar: {valor}`.
