@@ -1,10 +1,10 @@
 # Desafio: Aplicação de Webserver HTTP, Contextos, Banco de Dados e Manipulação de Arquivos com Go
 
-Neste desafio, vamos aplicar o que aprendemos sobre webserver HTTP, contextos, banco de dados e manipulação de arquivos com Go.
+Aplicações: webserver HTTP, context, banco de dados e manipulação de arquivos com Go.
 
 ## Descrição
 
-Você precisará nos entregar dois sistemas em Go:
+Serviços:
 
 - `client.go`
 - `server.go`
