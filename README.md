@@ -59,6 +59,7 @@ client-server-api-cotacao-desafio-GO/
 └── server.go
 
 
+
 - `README.md`: Documentação do projeto.
 - `client.go`: Implementação do cliente para realizar requisições ao servidor.
 - `cotacao.txt`: Arquivo onde é salva a cotação atual no formato `Dólar: {valor}`.
