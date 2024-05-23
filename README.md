@@ -47,7 +47,9 @@ Serviços:
   - [X] Timeout máximo de 300ms para receber o resultado do `server.go`.
 
 ### Estrutura do Projeto
+
 client-server-api-cotacao-desafio-GO/
+
 ├── README.md
 
 ├── client.go
