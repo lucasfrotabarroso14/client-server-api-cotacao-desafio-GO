@@ -49,11 +49,17 @@ Serviços:
 ### Estrutura do Projeto
 client-server-api-cotacao-desafio-GO/
 ├── README.md
+
 ├── client.go
+
 ├── cotacao.txt
+
 ├── database.db
+
 ├── go.mod
+
 ├── go.sum
+
 └── server.go
 
 
