@@ -45,6 +45,27 @@ Serviços:
 - **Contexto do Cliente:**
   - [X] Criar o `context` do cliente.
   - [X] Timeout máximo de 300ms para receber o resultado do `server.go`.
+### Estrutura do Projeto
+
+A estrutura do projeto é organizada da seguinte forma:
+
+client-server-api-cotacao-desafio-GO/
+├── README.md
+├── client.go
+├── cotacao.txt
+├── database.db
+├── go.mod
+├── go.sum
+└── server.go
+
+
+- `README.md`: Documentação do projeto.
+- `client.go`: Implementação do cliente para realizar requisições ao servidor.
+- `cotacao.txt`: Arquivo onde é salva a cotação atual no formato `Dólar: {valor}`.
+- `database.db`: Banco de dados SQLite para armazenar as cotações.
+- `go.mod` e `go.sum`: Arquivos do módulo Go.
+- `server.go`: Implementação do servidor que consome a API de câmbio e retorna a cotação.
+
 
 ---
 
