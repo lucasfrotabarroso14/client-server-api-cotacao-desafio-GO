@@ -1,50 +1,80 @@
+# Aplicação de Webserver HTTP, Contextos, Banco de Dados e Manipulação de Arquivos com Go
 
-DESAFIO:
+Aplicações: webserver HTTP, context, banco de dados e manipulação de arquivos com Go.
 
-Neste desafio vamos aplicar o que aprendemos sobre webserver http, contextos,
-banco de dados e manipulação de arquivos com Go.
+## Descrição
 
-Você precisará nos entregar dois sistemas em Go:
-- client.go
-- server.go
+Serviços:
 
-Os requisitos para cumprir este desafio são:
+- `client.go`
+- `server.go`
 
-O client.go deverá realizar uma requisição HTTP no server.go solicitando a cotação do dólar.
+### Requisitos
 
-O server.go deverá consumir a API contendo o câmbio de Dólar e Real no endereço: https://economia.awesomeapi.com.br/json/last/USD-BRL e em seguida deverá retornar no formato JSON o resultado para o cliente.
+1. **client.go**
+   - Realizar uma requisição HTTP para `server.go` solicitando a cotação do dólar.
+   - Receber do `server.go` apenas o valor atual do câmbio (campo "bid" do JSON).
+   - Usar o package `context` com timeout máximo de 300ms para receber o resultado de `server.go`.
+   - Salvar a cotação atual em um arquivo `cotacao.txt` no formato: `Dólar: {valor}`.
+   - Retornar erro nos logs caso o tempo de execução seja insuficiente.
 
-Usando o package "context", o server.go deverá registrar no banco de dados SQLite cada cotação recebida, sendo que o timeout máximo para chamar
-a API de cotação do dólar deverá ser de 200ms e o timeout máximo para conseguir persistir os dados no banco deverá ser de 10ms.
+2. **server.go**
+   - Consumir a API de câmbio de Dólar e Real no endereço: [https://economia.awesomeapi.com.br/json/last/USD-BRL](https://economia.awesomeapi.com.br/json/last/USD-BRL).
+   - Retornar o resultado no formato JSON para o cliente.
+   - Usar o package `context` para registrar no banco de dados SQLite cada cotação recebida.
+     - Timeout máximo para chamar a API de cotação do dólar: 200ms.
+     - Timeout máximo para persistir os dados no banco: 10ms.
+   - Criar o endpoint `/cotacao` e usar a porta 8080.
+   - Retornar erro nos logs caso o tempo de execução seja insuficiente.
 
-O client.go precisará receber do server.go apenas o valor atual do câmbio (campo "bid" do JSON). Utilizando o package "context", o client.go terá um timeout máximo de
-300ms para receber o resultado do server.go.
+### Estrutura do Projeto
 
-Os 3 contextos deverão retornar erro nos logs caso o tempo de execução seja insuficiente.
+#### Servidor (`server.go`)
 
-O client.go terá que salvar a cotação atual em um arquivo "cotacao.txt" no formato: Dólar: {valor}
+- [X] Fazer função que vai consumir a API e retornar a cotação do dólar.
+- **Contexto do Servidor:**
+  - [X] Criar o `context` do servidor.
+  - [X] Timeout máximo para chamar a API: 200ms.
+  - [X] Timeout máximo para persistir os dados no banco: 10ms.
+- [X] Endpoint: `/cotacao` e porta: 8080.
 
-O endpoint necessário gerado pelo server.go para este desafio será: /cotacao e a porta a ser utilizada pelo servidor HTTP será a 8080.
+#### Cliente (`client.go`)
 
-###########################################################################################################################
+- [X] Fazer a requisição GET para o servidor.
+- [X] Salvar a cotação atual em um arquivo `cotacao.txt` (no formato: `Dólar: {valor}`).
+- **Contexto do Cliente:**
+  - [X] Criar o `context` do cliente.
+  - [X] Timeout máximo de 300ms para receber o resultado do `server.go`.
 
---- SERVIDOR:
+### Estrutura do Projeto
 
-[X] Fazer Funcao que vai consumir a api e retornar a cotacao do dolar
+client-server-api-cotacao-desafio-GO/
 
----- CONTEXT SERVIDOR-------
-[x] Criar o Context do servidor 
-[x] timeout maximo para chamar a api -> 200ms *
-[x] timeout maximo para persistir os dados no banco -> 10ms
-[X] endpoint -> /cotacao e porta -> 8080.
+├── README.md
 
-###########################################################################################################################
+├── client.go
 
---- CLIENTE:
-[X] Fazer a requisicao GET para o servidor
+├── cotacao.txt
 
-[X] salvar a cotacao atual em um arquivo -> cotacao.txt (no formato: Dolar: {valor})
+├── database.db
 
----- CONTEXT CLIENTE-------
-[X] Criar o Context do cliente
-[X] Timeout Maximo de 300 ms para receber o resultado do server.go
+├── go.mod
+
+├── go.sum
+
+└── server.go
+
+
+
+- `README.md`: Documentação do projeto.
+- `client.go`: Implementação do cliente para realizar requisições ao servidor.
+- `cotacao.txt`: Arquivo onde é salva a cotação atual no formato `Dólar: {valor}`.
+- `database.db`: Banco de dados SQLite para armazenar as cotações.
+- `go.mod` e `go.sum`: Arquivos do módulo Go.
+- `server.go`: Implementação do servidor que consome a API de câmbio e retorna a cotação.
+
+
+---
+
+Sinta-se à vontade para clonar o repositório e contribuir com melhorias!
+
